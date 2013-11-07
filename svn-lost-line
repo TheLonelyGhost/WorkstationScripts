@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+
+my $file=$ARGV[0];
+my $pattern=$ARGV[1];
+
+my @history=`svn log $file`;
+foreach (@history)
+{
+    chomp;
+    if (m/^r(\d+)/)
+    {
+        my $revision=$1;
+        my $sep='-' x length($_);
+
+        print "$sep\n$_\n$sep\n";
+
+        my @code=`svn cat -r $revision $file`;
+        my $lineno=0;
+        my $found=0;
+        foreach my $line (@code)
+        {
+            $lineno++;
+            if ($line=~m/$pattern/)
+            {
+                $line=~s/^\s+//;
+                print "line $lineno $line";
+                 $found=1;
+            }
+        }
+
+	print "Not found\n" unless ($found);
+    }
+}
