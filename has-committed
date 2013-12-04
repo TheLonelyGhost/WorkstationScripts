@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+svn log -r $2:$3 | grep $1 -
